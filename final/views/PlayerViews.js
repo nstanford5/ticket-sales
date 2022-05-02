@@ -111,10 +111,11 @@ exports.GetGuess = class extends React.Component{
 /*
 exports.SeeActual = class extends React.Component {
   render() {
+  const {sum} = this.props;
     return (
       <div>
         The total was: 
-        <br /> {parent.sum}
+        <br /> {sum}
       </div>
     );
   }
