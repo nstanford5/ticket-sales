@@ -50,7 +50,6 @@ const Player = {
   ...hasRandom, 
   getHand: Fun([], UInt),
   getGuess: Fun([UInt], UInt),
-  seeActual: Fun([UInt], Null),
   seeOutcome: Fun([UInt], Null),
   informTimeout: Fun([], Null),
 };
@@ -157,15 +156,6 @@ export const main = Reach.App(() => {
     checkCommitment(commitA, saltA, playHandA);
     checkCommitment(guessCommitA, guessSaltA, gHandA);
 
-    /*
-    * having trouble with the front end displaying this
-    *
-    const winningNum = playHandA + playHandB;
-
-    each([Starsky, Hutch], () => {
-      interact.seeActual(winningNum);
-    });
-    */
 
     // all Reach loops require this continue explicitly
     // variables are only permitted to be assigned values
