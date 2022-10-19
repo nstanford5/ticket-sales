@@ -12,6 +12,7 @@ export const main = Reach.App(() => {
   const A = Participant('Admin', {
     cost: UInt,
     token: Token,
+    supply: UInt,
     ready: Fun([Contract], Null),
   });
   const B = API('Buyer', {
@@ -22,16 +23,17 @@ export const main = Reach.App(() => {
   A.only(() => {
     const amount = declassify(interact.cost);
     const tok = declassify(interact.token);
+    const supply = declassify(interact.supply);
   });
-  A.publish(amount, tok);
+  A.publish(amount, tok, supply);
   commit();
   A.interact.ready(getContract());
-  A.pay([[3, tok]]);
+  A.pay([[supply, tok]]);
 
   const [ticketsSold] = parallelReduce([0])
     .invariant(balance() == amount * ticketsSold)
-    .invariant(balance(tok) == 3 - ticketsSold)// commenting this out throws balance errors
-    .while(ticketsSold < 3)
+    .invariant(balance(tok) == supply - ticketsSold)// commenting this out throws balance errors
+    .while(ticketsSold < supply)
     .api_(B.buyTicket, () => {
       return[amount, (ret) => {
         transfer(1, tok).to(this);

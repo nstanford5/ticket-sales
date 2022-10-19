@@ -15,16 +15,18 @@ const startBuyers = async () => {
     await acc.tokenAccept(ticketTok);
     const succ = await ctc.apis.Buyer.buyTicket();
     console.log(`${who} purchased a ticket is ${succ}`);
-  };// end of runBuyers
-  await runBuyers('One');
-  await runBuyers('Two');
-  await runBuyers('Three');
-};// end of startBuyers
+  }// end of runBuyers
+  for(let i = 0; i < 500; i++){
+    console.log(`Test ${i}`);
+    await runBuyers('Buyer');
+  }
+}// end of startBuyers
 
 await Promise.all([
   backend.Admin(ctcA, {
     cost: stdlib.parseCurrency(10),
     token: ticketTok,
+    supply: 500,
     ready: (contract) => {
       console.log(`Ready at contract: ${contract}`);
       startBuyers();
