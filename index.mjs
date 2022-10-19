@@ -25,7 +25,8 @@ await Promise.all([
   backend.Admin(ctcA, {
     cost: stdlib.parseCurrency(10),
     token: ticketTok,
-    ready: () => {
+    ready: (contract) => {
+      console.log(`Ready at contract: ${contract}`);
       startBuyers();
     },
   }),
