@@ -10,6 +10,7 @@ const ticketTok = tickets.id;
 console.log('Welcome to the ticket distributor\nLets get you a ticket');
 
 const startBuyers = async () => {
+  await stdlib.wait(10);
   const runBuyers = async (who) => {
     const acc = await stdlib.newTestAccount(stdlib.parseCurrency(100));
     const ctc = acc.contract(backend, ctcA.getInfo());
