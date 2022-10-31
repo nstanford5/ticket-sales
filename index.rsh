@@ -1,43 +1,36 @@
-/**
- * Ticket Sale DApp
- * 
- * covers:
- * non-network tokens
- * more advanced invariant
- */
-
 'reach 0.1';
 
 export const main = Reach.App(() => {
   const A = Participant('Admin', {
-    cost: UInt,
-    token: Token,
-    supply: UInt,
-    ready: Fun([Contract], Null),
+    params: Object({
+      cost: UInt,
+      tok: Token,
+      supply: UInt,
+    }),
+    launched: Fun([Contract], Null),
   });
   const B = API('Buyer', {
-    buyTicket: Fun([], Bool),
+    buyTicket: Fun([], Null),
   });
   init();
 
   A.only(() => {
-    const amount = declassify(interact.cost);
-    const tok = declassify(interact.token);
-    const supply = declassify(interact.supply);
+    const {cost, tok, supply} = declassify(interact.params);
   });
-  A.publish(amount, tok, supply);
+  A.publish(cost, tok, supply);
   commit();
-  A.interact.ready(getContract());
+  A.interact.launched(getContract());
   A.pay([[supply, tok]]);
 
   const [ticketsSold] = parallelReduce([0])
-    .invariant(balance() == amount * ticketsSold)
-    .invariant(balance(tok) == supply - ticketsSold)// commenting this out throws balance errors
+    .invariant(balance() == cost * ticketsSold)
+    .invariant(balance(tok) == supply - ticketsSold)
     .while(ticketsSold < supply)
     .api_(B.buyTicket, () => {
-      return[amount, (ret) => {
+      check(ticketsSold != supply, "sorry, out of tickets");
+      return[cost, (ret) => {
         transfer(1, tok).to(this);
-        ret(true);
+        ret(null);
         return [ticketsSold + 1];
       }];
     });
