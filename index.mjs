@@ -1,7 +1,7 @@
 import { loadStdlib } from "@reach-sh/stdlib";
 import * as backend from './build/index.main.mjs';
 const stdlib = loadStdlib({REACH_NO_WARN: 'Y'});
-const MAX = 500;
+const MAX = 50;
 const accA = await stdlib.newTestAccount(stdlib.parseCurrency(5000));
 const ctcA = accA.contract(backend);
 const tickets = await stdlib.launchToken(accA, "Tickets", "TIX", {supply: MAX});
