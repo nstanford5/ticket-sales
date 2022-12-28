@@ -14,7 +14,6 @@ Start by creating your files:
 ```cmd
 $ touch index.rsh index.mjs
 ```
-
 Our application is going to allow the Administrator to provide details about the token sale and then allow users to come in and buy tokens until the contract balance is zero. At that time it will close the sale functions and transfer the total network tokens collected back to the Administrator.
 
 As with any Reach DApp, it is best to first think about who the users are in our application.
@@ -59,32 +58,32 @@ Why then did we move *out* of consensus on Line 21?
 The answer is that we need to `publish` the non-network token `tok` before we can `pay` it into the contract. Reach supports network tokens by default, but a non-network token, like the one in our program, needs to be taught to Reach before you can pay it in.
 
 The general flow for paying non-network tokens:
-1. Get token info in Local Step
-2. `publish` token info in Consensus Step
-3. commit()
-4. `pay` tokens in Consensus Step
+1. Get token info in Local Step.
+2. `publish` token info in Consensus Step.
+3. `commit()`.
+4. `pay` tokens in Consensus Step.
 
-That means our next step is to `pay` the tokens into the contract
+That means our next step is to `pay` the tokens into the contract.
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 22-23
 ```
-- Line 22 pays the `supply` of `tok` from `A` into the contract account. This must be a syntactic tuple where the general structure is this `A.pay([networkTokenAmount, [amount, non-networkTokens]]);`
-- Line 23 notifies the frontend that our contract is ready to start accepting API calls
+- Line 22 pays the `supply` of `tok` from `A` into the contract account. This must be a syntactic tuple where the general structure is this `A.pay([networkTokenAmount, [amount, non-networkTokens]]);`.
+- Line 23 notifies the frontend that our contract is ready to start accepting API calls.
 
 This is a good place to pause in our Reach (`rsh`) file and get into the frontend (`mjs`) testing file.
 
-Let's start with some basics
+Let's start with some basics.
 ```
 load: /examples/ticket-sales/index.mjs
 md5: d2b60e84f70854bc18c26764bdcaf1aa
 range: 1-9
 ```
-- Line 1-2 are necessary imports
-- Line 3 sets a constant for the standard library and hides warning messages
-- Line 4 sets a constant for the `MAX` number of tickets. Changing this number does so across the entire program
-- Line 7 launches a new token with a `MAX` supply. Alternatively, you could replace `tickets.id` with a known testnet token id string
+- Line 1-2 are necessary imports.
+- Line 3 sets a constant for the standard library and hides warning messages.
+- Line 4 sets a constant for the `MAX` number of tickets. Changing this number does so across the entire program.
+- Line 7 launches a new token with a `MAX` supply. Alternatively, you could replace `tickets.id` with a known testnet token id string.
 - Line 9 welcomes you to the ticket sales revolution. Just make sure you [print enough pamphlets](https://youtu.be/Kb1ztV93dsE)
 
 :::note
@@ -99,10 +98,10 @@ load: /examples/ticket-sales/index.mjs
 md5: d2b60e84f70854bc18c26764bdcaf1aa
 range: 24-35
 ```
-- Line 24 creates a promise with the Admin contract handle
-- Lines 25-28 specify the parameters of our sale
-- Line 30 defines our `launched` function, which starts the chain of API calls to our contract with `startBuyers()`
-- Line 35 is useful to note our test suite reached its exit normally
+- Line 24 creates a promise with the Admin contract handle.
+- Lines 25-28 specify the parameters of our sale.
+- Line 30 defines our `launched` function, which starts the chain of API calls to our contract with `startBuyers()`.
+- Line 35 is useful to note our test suite reached its exit normally.
 
 Our frontend test suite (`mjs`) is now caught up to our Reach (`rsh`) file.
 
@@ -117,9 +116,9 @@ md5: c425745032273893d106fe3de005f15e
 range: 25-28
 ```
 - Line 25 declares a new `parallelReduce` and sets it up to track a single value `ticketsSold`, which is initialized to 0.
-- Line 26 states an `invariant` about our loop that the network token balance will always equal `cost * ticketsSold`
-- Line 27 states an `invariant` about our loop that the non-network token balance will always equal the initial `supply - ticketsSold`
-- Line 28 sets our `while` loop to run until `ticketsSold == supply` at which point it will exit the `parallelReduce`
+- Line 26 states an `invariant` about our loop that the network token balance will always equal `cost * ticketsSold`.
+- Line 27 states an `invariant` about our loop that the non-network token balance will always equal the initial `supply - ticketsSold`.
+- Line 28 sets our `while` loop to run until `ticketsSold == supply` at which point it will exit the `parallelReduce`.
 
 It is important to note the relationship between the values above. 
 
@@ -154,7 +153,7 @@ load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 37-39
 ```
-- Line 37 transfers the exact known balance back to the seller. It is bad practice to use `transfer(balance()).to(A)` here, use a formula that evaluates to the known balance.
+- Line 37 transfers the exact known balance back to the seller. It is bad practice to use `transfer(balance()).to(A)` here. Instead, use a formula that evaluates to the known balance.
 - Line 38-39 has us commit and exit the DApp.
 
 We are almost done. The final step is to test our API function by making some calls in the frontend (`mjs`) file.
