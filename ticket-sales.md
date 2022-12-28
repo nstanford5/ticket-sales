@@ -158,7 +158,7 @@ range: 37-39
 
 We are almost done. The final step is to test our API function by making some calls in the frontend (`mjs`) file.
 
-To test our users, we need functions to create users.
+To test our users, we need functions to create accounts and contract information.
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
