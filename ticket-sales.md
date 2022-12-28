@@ -5,7 +5,6 @@ This tutorial will demonstrate a token distribution mechanism in Reach. This tok
 It assumes prior knowledge of Reach: we recommend completing the [Rock, Paper, Scissors](https://docs.reach.sh/tut/rps) tutorial first. And maybe [RSVP](https://docs.reach.sh/tut/rsvp/#tut-rsvp). And maybe [Wisdom For Sale](https://docs.reach.sh/tut/wfs/#wfs). And maybe [ERC20](https://docs.reach.sh/tut/erc20/#erc20). Just do them all, you will be really good after.
 
 We assume you are working in a project folder called `ticket-sales`:
-
 ```cmd
 $ mkdir ticket-sales
 $ cd ticket-sales
@@ -37,8 +36,8 @@ load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 12-15
 ```
-- Line 12 defines a dynamic amount of users, all with shared abilities
-- Line 13 declares a `buyTicket` function that our Buyer(s) will be able to call 
+- Line 12 defines a dynamic amount of users, all with shared abilities.
+- Line 13 declares a `buyTicket` function that our Buyer(s) will be able to call.
 
 Now we've defined our users and the functions they will be allowed, we call `init()` to start stepping through the states of our program.
 
@@ -48,10 +47,10 @@ load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 17-21
 ```
-- Line 17 starts the Local Step
-- Line 18 declassifies the parameters and unpacks them into respective constants
-- Line 20 publishes those values to the blockchain
-- Line 21 commits to move us out of consensus step
+- Line 17 starts the Local Step.
+- Line 18 declassifies the parameters and unpacks them into respective constants.
+- Line 20 publishes those values to the blockchain.
+- Line 21 commits to move us out of consensus step.
 
 Now, the next step is to have the Admin actually pay the non-network tokens into the contract. This needs to happen in a consensus step.
 
