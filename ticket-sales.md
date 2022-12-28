@@ -21,39 +21,33 @@ Our application is going to allow the Administrator to provide details about the
 As with any Reach DApp, it is best to first think about who the users are in our application.
 
 There will be one Deployer(Admin) providing the parameters of the sale, including the non-network tokens (or tickets).
-
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 1-11
 ```
-
 - Line 4 declares a single `Participant` to bind as the Admin.
 - Lines 5-8 declares the parameters to be passed to the contract initially.
 - Line 10 declares a `launched` function, common in this style of application. [Why?](https://docs.reach.sh/tut/erc20/#p_15)
 
 
 We then need a dynamic amount of users whose functionality will be repeated.
-
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 12-15
 ```
-
 - Line 12 defines a dynamic amount of users, all with shared abilities
 - Line 13 declares a `buyTicket` function that our Buyer(s) will be able to call 
 
 Now we've defined our users and the functions they will be allowed, we call `init()` to start stepping through the states of our program.
 
 The first step here is for the Admin to provide the parameters we've declared. This happens in an Local Step. [Refresher on Modes of a Reach DApp](https://github.com/reach-sh/reach-lang/discussions/1171)
-
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 17-21
 ```
-
 - Line 17 starts the Local Step
 - Line 18 declassifies the parameters and unpacks them into respective constants
 - Line 20 publishes those values to the blockchain
@@ -72,13 +66,11 @@ The general flow for paying non-network tokens:
 4. `pay` tokens in Consensus Step
 
 That means our next step is to `pay` the tokens into the contract
-
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 22-23
 ```
-
 - Line 22 pays the `supply` of `tok` from `A` into the contract account. This must be a syntactic tuple where the general structure is this `A.pay([networkTokenAmount, [amount, non-networkTokens]]);`
 - Line 23 notifies the frontend that our contract is ready to start accepting API calls
 
@@ -90,7 +82,6 @@ load: /examples/ticket-sales/index.mjs
 md5: d2b60e84f70854bc18c26764bdcaf1aa
 range: 1-9
 ```
-
 - Line 1-2 are necessary imports
 - Line 3 sets a constant for the standard library and hides warning messages
 - Line 4 sets a constant for the `MAX` number of tickets. Changing this number does so across the entire program
@@ -104,7 +95,6 @@ It is *very* important for you as a programmer to understand the warning message
 :::
 
 Now we'll fast forward to the end of our test suite and add the functionality for our Admin.
-
 ```
 load: /examples/ticket-sales/index.mjs
 md5: d2b60e84f70854bc18c26764bdcaf1aa
@@ -122,7 +112,6 @@ Let's move back to the Reach file and actually create our API function.
 This program ends up being short and compact because of the `parallelReduce` control structure that we'll implement to allow access to our API functions in a looping construct.
 
 In this case, we want the loop to allow the function to be callable until the contract is out of tokens. This is an important piece of information for our design.
-
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
@@ -179,10 +168,10 @@ range: 11-22
 ```
 - Line 11 is the outer function that will be called from `launched` to start making API calls.
 - Line 12 will allow for repeating actions for individual users.
-- Line 13-14 create an account, fund it, and connect it to Admins contract instance
-- Line 15 has the account opt-in to our ticket token
-- Line 16 is our API call. It use the contract handle to access the `Buyey.buyTicket` function.
-- Line 19-20 is a looping construct for easily repeating users up to `MAX`
+- Line 13-14 create an account, fund it, and connect it to Admins contract instance.
+- Line 15 has the account opt-in to our ticket token.
+- Line 16 is our API call. It use the contract handle to access the `Buyer.buyTicket` function.
+- Line 19-20 is a looping construct for easily repeating users up to `MAX`.
 
 That is everything you need for a decentralized ticket-sales contract in Reach. 
 
@@ -248,7 +237,6 @@ Tickets sold: 48
 Tickets sold: 49
 Exiting...
 ```
-
 Again, the number of tickets sold here can be changed by editing the `MAX` constant.
 
 Next, we'll start working on a frontend to demonstrate integrating another Reach DApp with React.
