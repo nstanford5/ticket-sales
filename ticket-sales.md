@@ -1,8 +1,8 @@
 # {#ticket-sales} Ticket Sales, your ticket(master) servant
 
-This tutorial will demonstrate a token distribution mechanism in Reach. This token distribution DApp could be used for many different applications, but we thought it would could best used to demonstrate how a decentralized DApp replacement for Ticketmaster.
+This tutorial will demonstrate a token distribution mechanism in Reach. This token distribution DApp could be used for many different applications, but we thought it would be best used to demonstrate how a decentralized DApp might replace Ticketmaster.
 
-It assumes prior knowledge of Reach: we recommend completing the [Rock, Paper, Scissors](https://docs.reach.sh/tut/rps) tutorial first. And maybe [RSVP](https://docs.reach.sh/tut/rsvp/#tut-rsvp). And maybe [Wisdom For Sale](https://docs.reach.sh/tut/wfs/#wfs). And maybe [ERC20](https://docs.reach.sh/tut/erc20/#erc20). Just do them all, you will be really good after.
+It assumes prior knowledge of Reach: we recommend completing the [Rock, Paper, Scissors](https://docs.reach.sh/tut/rps) tutorial first. And maybe [RSVP](https://docs.reach.sh/tut/rsvp/#tut-rsvp). And maybe [ERC20](https://docs.reach.sh/tut/erc20/#erc20). You could just do them all; you will be really good afterwards.
 
 We assume you are working in a project folder called `ticket-sales`:
 ```cmd
@@ -14,11 +14,11 @@ Start by creating your files:
 ```cmd
 $ touch index.rsh index.mjs
 ```
-Our application is going to allow the Administrator to provide details about the token sale and then allow users to come in and buy tokens until the contract balance is zero. At that time it will close the sale functions and transfer the total network tokens collected back to the Administrator.
+Our application is going to allow the Administrator to provide details about the token sale and then allow users to come in and buy tokens until the contract balance is zero. At that time, it will close all sale functions and transfer the collected network tokens to the Administrator.
 
 As with any Reach DApp, it is best to first think about who the users are in our application.
 
-There will be one Deployer(Admin) providing the parameters of the sale, including the non-network tokens (or tickets).
+There will be one Deployer (Admin) providing the parameters of the sale, including the non-network tokens (or tickets).
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
@@ -38,7 +38,7 @@ range: 12-15
 - Line 12 defines a dynamic amount of users, all with shared abilities.
 - Line 13 declares a `buyTicket` function that our Buyer(s) will be able to call.
 
-Now we've defined our users and the functions they will be allowed, we call `init()` to start stepping through the states of our program.
+Now, we've defined our users and the functions they will be allowed, we call `init()` to begin stepping through the states of our program.
 
 The first step here is for the Admin to provide the parameters we've declared. This happens in an Local Step. [Refresher on Modes of a Reach DApp](https://github.com/reach-sh/reach-lang/discussions/1171)
 ```
@@ -69,7 +69,8 @@ load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 22-23
 ```
-- Line 22 pays the `supply` of `tok` from `A` into the contract account. This must be a syntactic tuple where the general structure is this `A.pay([networkTokenAmount, [amount, non-networkTokens]]);`.
+- Line 22 pays the `supply` of `tok` from `A` into the contract account. This must be a syntactic tuple where the general structure is `A.pay([networkTokenAmount, [amount, non-networkTokens]]);`. 
+In this instance, the `networkTokenAmount` is null so its value is absent.
 - Line 23 notifies the frontend that our contract is ready to start accepting API calls.
 
 This is a good place to pause in our Reach (`rsh`) file and get into the frontend (`mjs`) testing file.
@@ -115,7 +116,7 @@ load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 25-28
 ```
-- Line 25 declares a new `parallelReduce` and sets it up to track a single value `ticketsSold`, which is initialized to 0.
+- Line 25 declares a new `parallelReduce` and sets it up to track a single value `ticketsSold`, which is initialized at 0.
 - Line 26 states an `invariant` about our loop that the network token balance will always equal `cost * ticketsSold`.
 - Line 27 states an `invariant` about our loop that the non-network token balance will always equal the initial `supply - ticketsSold`.
 - Line 28 sets our `while` loop to run until `ticketsSold == supply` at which point it will exit the `parallelReduce`.
@@ -124,7 +125,7 @@ It is important to note the relationship between the values above.
 
 The Reach compiler will check your DApp for *all* of the possibilities related to your program values in an *unbounded* way, bound only by the limits of the data type you are working with. Reach will put bounds on those checks as determined by your verification checks.
 
-By tightly tracking all of the `invariant` values in our `parallelReduce` LHS and `while` loop -- and relating them back to the contract balance of network tokens and non-network tokens, we can satisfy the Reach Verification Engine to produce no errors.
+By tightly tracking all of the `invariant` values in our `parallelReduce`'s Left-Hand Side (LHS) and in our `while` loop. By relating our assertions back to the contract balance of network tokens and non-network tokens, we can satisfy the Reach Verification Engine to produce no errors.
 
 Understanding this relationship is key to building Reach DApps.
 
@@ -139,7 +140,7 @@ range: 29-36
 - Line 31 starts the outer `return`. Here we sepecify a `PAY_EXPR` of `cost` and declare our return function `ret`
 - Line 32 sends one non-network token (ticket) to the API caller
 - Line 33 returns null to the caller
-- Line 34 is our inner return, where we increment `parallelReduce` LHS value `ticketsSold`
+- Line 34 is our inner return, where we increment the `parallelReduce` LHS value, `ticketsSold`
 
 :::note
 On incrementing, Reach *does not* support incrementing with `i++`. 
@@ -160,15 +161,15 @@ We are almost done. The final step is to test our API function by making some ca
 
 To test our users, we need functions to create accounts and contract information.
 ```
-load: /examples/ticket-sales/index.rsh
-md5: c425745032273893d106fe3de005f15e
+load: /examples/ticket-sales/index.mjs
+md5: d2b60e84f70854bc18c26764bdcaf1aa
 range: 11-22
 ```
 - Line 11 is the outer function that will be called from `launched` to start making API calls.
 - Line 12 will allow for repeating actions for individual users.
 - Line 13-14 create an account, fund it, and connect it to Admins contract instance.
 - Line 15 has the account opt-in to our ticket token.
-- Line 16 is our API call. It use the contract handle to access the `Buyer.buyTicket` function.
+- Line 16 is our API call. It uses the contract handle to access the `Buyer.buyTicket` function.
 - Line 19-20 is a looping construct for easily repeating users up to `MAX`.
 
 That is everything you need for a decentralized ticket-sales contract in Reach. 
@@ -237,6 +238,6 @@ Exiting...
 ```
 Again, the number of tickets sold here can be changed by editing the `MAX` constant.
 
-Next, we'll start working on a frontend to demonstrate integrating another Reach DApp with React.
+As a next step, we would work on a frontend to enable our users to easily interact with our DApp. If you're frontend agnostic, we currently recommend using React, but you can use any frontend technology that you prefer.
 
 This code is open source. Someone use it to unseat Ticketmaster, please. We are tired of paying $3k USD for Taylor Swift tickets.
