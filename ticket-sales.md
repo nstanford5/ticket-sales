@@ -24,7 +24,7 @@ load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 1-11
 ```
-- Line 4 declares a single `Participant` to bind as the Admin.
+- Line 4 declares a single `{!rsh} Participant` to bind as the Admin.
 - Lines 5-8 declares the parameters to be passed to the contract initially.
 - Line 10 declares a `launched` function, common in this style of application. [Why?](https://docs.reach.sh/tut/erc20/#p_15)
 
@@ -38,7 +38,7 @@ range: 12-15
 - Line 12 defines a dynamic amount of users, all with shared abilities.
 - Line 13 declares a `buyTicket` function that our Buyer(s) will be able to call.
 
-Now, we've defined our users and the functions they will be allowed, we call `init()` to begin stepping through the states of our program.
+Now, we've defined our users and the functions they will be allowed, we call `{!rsh} init`() to begin stepping through the states of our program.
 
 The first step here is for the Admin to provide the parameters we've declared. This happens in an Local Step. [Refresher on Modes of a Reach DApp](https://github.com/reach-sh/reach-lang/discussions/1171)
 ```
@@ -55,21 +55,21 @@ Now, the next step is to have the Admin actually pay the non-network tokens into
 
 Why then did we move *out* of consensus on Line 21?
 
-The answer is that we need to `publish` the non-network token `tok` before we can `pay` it into the contract. Reach supports network tokens by default, but a non-network token, like the one in our program, needs to be taught to Reach before you can pay it in.
+The answer is that we need to `{!rsh} publish` the non-network token `tok` before we can `{!rsh} pay` it into the contract. Reach supports network tokens by default, but a non-network token, like the one in our program, needs to be taught to Reach before you can pay it in.
 
 The general flow for paying non-network tokens:
 1. Get token info in Local Step.
-2. `publish` token info in Consensus Step.
-3. `commit()`.
-4. `pay` tokens in Consensus Step.
+2. `{!rsh} publish` token info in Consensus Step.
+3. `{!rsh} commit`().
+4. `{!rsh} pay` tokens in Consensus Step.
 
-That means our next step is to `pay` the tokens into the contract.
+That means our next step is to `{!rsh} pay` the tokens into the contract.
 ```
 load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 22-23
 ```
-- Line 22 pays the `supply` of `tok` from `A` into the contract account. This must be a syntactic tuple where the general structure is `A.pay([networkTokenAmount, [amount, non-networkTokens]]);`. 
+- Line 22 pays the `supply` of `tok` from `{!rsh} Participant` `A` into the contract account. This must be a syntactic tuple where the general structure is `A.pay([networkTokenAmount, [amount, non-networkTokens]]);`. 
 In this instance, the `networkTokenAmount` is null so its value is absent.
 - Line 23 notifies the frontend that our contract is ready to start accepting API calls.
 
@@ -108,7 +108,7 @@ Our frontend test suite (`mjs`) is now caught up to our Reach (`rsh`) file.
 
 Let's move back to the Reach file and actually create our API function.
 
-This program ends up being short and compact because of the `parallelReduce` control structure that we'll implement to allow access to our API functions in a looping construct.
+This program ends up being short and compact because of the `{!rsh} parallelReduce` control structure that we'll implement to allow access to our API functions in a looping construct.
 
 In this case, we want the loop to allow the function to be callable until the contract is out of tokens. This is an important piece of information for our design.
 ```
@@ -116,16 +116,16 @@ load: /examples/ticket-sales/index.rsh
 md5: c425745032273893d106fe3de005f15e
 range: 25-28
 ```
-- Line 25 declares a new `parallelReduce` and sets it up to track a single value `ticketsSold`, which is initialized at 0.
+- Line 25 declares a new `{!rsh} parallelReduce` and sets it up to track a single value `ticketsSold`, which is initialized at 0.
 - Line 26 states an `invariant` about our loop that the network token balance will always equal `cost * ticketsSold`.
-- Line 27 states an `invariant` about our loop that the non-network token balance will always equal the initial `supply - ticketsSold`.
-- Line 28 sets our `while` loop to run until `ticketsSold == supply` at which point it will exit the `parallelReduce`.
+- Line 27 states an `{!rsh} invariant` about our loop that the non-network token balance will always equal the initial `supply - ticketsSold`.
+- Line 28 sets our `{!rsh} while` loop to run until `ticketsSold == supply` at which point it will exit the `{!rsh} parallelReduce`.
 
 It is important to note the relationship between the values above. 
 
 The Reach compiler will check your DApp for *all* of the possibilities related to your program values in an *unbounded* way, bound only by the limits of the data type you are working with. Reach will put bounds on those checks as determined by your verification checks.
 
-By tightly tracking all of the `invariant` values in our `parallelReduce`'s Left-Hand Side (LHS) and in our `while` loop. By relating our assertions back to the contract balance of network tokens and non-network tokens, we can satisfy the Reach Verification Engine to produce no errors.
+By tightly tracking all of the `{!rsh} invariant` values in our `{!rsh} parallelReduce`'s Left-Hand Side (LHS) and in our `{!rsh} while` loop. By relating our assertions back to the contract balance of network tokens and non-network tokens, we can satisfy the Reach Verification Engine to produce no errors.
 
 Understanding this relationship is key to building Reach DApps.
 
@@ -137,10 +137,10 @@ range: 29-36
 ```
 - Line 29 defines an api macro (`.api_`) from the `B` API with the name `buyTicket`. It takes no parameters.
 - Line 30 is an extra verification check. Removing this from the program *will not* introduce compiler errors, but is good for defensive programming. (note to Jay: the only purpose this check serves is to negate split second API calls from being made before the loop exits properly. Is this even possible, or should we just remove this?)
-- Line 31 starts the outer `return`. Here we sepecify a `PAY_EXPR` of `cost` and declare our return function `ret`
+- Line 31 starts the outer `return`. Here we specify a `PAY_EXPR` of `cost` and declare our return function `ret`
 - Line 32 sends one non-network token (ticket) to the API caller
 - Line 33 returns null to the caller
-- Line 34 is our inner return, where we increment the `parallelReduce` LHS value, `ticketsSold`
+- Line 34 is our inner return, where we increment the `{!rsh} parallelReduce` LHS value, `ticketsSold`
 
 :::note
 On incrementing, Reach *does not* support incrementing with `i++`. 
